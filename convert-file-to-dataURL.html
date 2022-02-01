@@ -1,0 +1,137 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+</head> 
+
+<body>
+
+	<script>
+
+		let titleElem = document.createElement("div");
+		titleElem.style.margin = "64 0";
+		titleElem.style.fontFamily = "Courier New";
+		titleElem.style.fontSize = 32;
+		titleElem.style.fontWeight = "bold";
+		titleElem.textContent = "Convert File To DataURL";
+
+		let mainArea = document.createElement("div");
+		mainArea.style.position = "absolute";
+		mainArea.style.display = "flex";
+		mainArea.style.top = 0;
+		mainArea.style.right = 0;
+		mainArea.style.bottom = 0;
+		mainArea.style.left = 0;
+		mainArea.style.backgroundColor = "#88CCFF";
+		mainArea.style.justifyContent = "center";
+		mainArea.style.alignItems = "center";
+		mainArea.style.flexDirection = "column";
+
+		let dropArea = document.createElement("div");
+		dropArea.innerHTML = "Drop your file here";
+		dropArea.style.display = "flex";
+		dropArea.style.width = 256;
+		dropArea.style.height = 128;
+		dropArea.style.borderStyle = "dashed";
+		dropArea.style.borderRadius = "16px";
+		dropArea.style.backgroundColor = "#CCDDFF";
+		dropArea.style.fontFamily = "Courier New";
+		dropArea.style.fontSize = 16;
+		dropArea.style.fontWeight = "bold";
+		dropArea.style.justifyContent = "center";
+		dropArea.style.alignItems = "center";
+
+		let outputArea = document.createElement("div");
+		outputArea.style.display = "flex";
+		outputArea.style.alignItems = "center";
+		outputArea.style.margin = "48 0";
+		outputArea.style.boxSizing = "border-box";
+		//outputArea.style.border = "1px solid";
+		outputArea.style.height = 128;
+
+		let outputInfo = document.createElement("div");
+		outputInfo.style.display = "flex";
+		outputInfo.style.flexDirection = "column";
+
+		let outputElem = document.createElement("div");
+		outputElem.style.width = 192;
+		outputElem.style.display = "inline-block";
+		outputElem.style.overflow = "hidden";
+		outputElem.style.textOverflow = "ellipsis";
+		outputElem.style.fontFamily = "Courier New";
+		outputElem.style.padding = "4 0";
+
+		let outputSize = document.createElement("div");
+		outputSize.style.width = 192;
+		outputSize.style.display = "inline-block";
+		outputSize.style.overflow = "hidden";
+		outputSize.style.fontFamily = "Courier New";
+		outputSize.style.padding = "4 0";
+
+		let copyButton = document.createElement("button");
+		copyButton.innerHTML = "&#x1f4cb"; // copy symbol
+		copyButton.style.marginLeft = "16";
+		copyButton.style.padding = "4 4";
+
+		outputInfo.appendChild(outputElem);
+		outputInfo.appendChild(outputSize);
+
+		outputArea.appendChild(outputInfo);
+		outputArea.appendChild(copyButton);
+
+		mainArea.appendChild(titleElem);
+		mainArea.appendChild(dropArea);
+		mainArea.appendChild(outputArea);
+
+		document.body.appendChild(mainArea);
+
+		let disable_dropEffect = function(e){
+			e.stopPropagation();
+			e.preventDefault();
+		};
+		
+		let enable_dropEffect = function(e){
+			e.stopPropagation();
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'copy';
+		};
+
+		var dataURL = "";
+		let drop_file = function(e, slot){
+			e.stopPropagation();
+			e.preventDefault();
+			//get_file(slot, e.dataTransfer.files);
+			var reader = new FileReader();
+			reader.addEventListener("load", function(){
+				//outputElem.value = reader.result;
+				let result = reader.result;
+				outputElem.textContent = result;
+				outputSize.textContent = "Size : " + result.length;
+				dataURL = reader.result;
+			});
+			
+			let file = e.dataTransfer.files[0];
+			if(file) reader.readAsDataURL(file);
+		};
+
+		let copy_toClipboard = function(){
+			navigator.clipboard.writeText(dataURL);
+		};
+
+		mainArea.addEventListener("dragover", disable_dropEffect);
+		mainArea.addEventListener("drop", disable_dropEffect);
+
+		dropArea.addEventListener("dragover", (function(e){enable_dropEffect(e);}) );
+		dropArea.addEventListener("drop", (function(e){drop_file(e);}) );
+
+		copyButton.addEventListener("click", copy_toClipboard);
+
+	</script>
+
+
+
+
+
+</body>
+
+</html>
